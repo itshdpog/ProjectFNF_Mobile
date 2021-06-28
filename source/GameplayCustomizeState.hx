@@ -104,6 +104,10 @@ class GameplayCustomizeState extends MusicBeatState
 		sick.updateHitbox();
 
 		FlxG.mouse.visible = true;
+
+		#if android
+		addVirtualPad(NONE, A_B);
+		#end
 	}
 
 	override function update(elapsed:Float)

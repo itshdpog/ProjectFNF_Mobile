@@ -12,6 +12,10 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import lime.utils.Assets;
 
+/*
+ * Klav Note: WTF AFLAC???? HOW DOES THIS SHIT WORK??? Klav note 2: I figured it out :)
+*/
+
 class OptionsMenu extends MusicBeatState
 {
 	public static var instance:OptionsMenu;
@@ -61,6 +65,7 @@ class OptionsMenu extends MusicBeatState
 		grpControls = new FlxTypedGroup<Alphabet>();
 		add(grpControls);
 		controlsStrings[controlsStrings.length + 1] = "setCustomize Keybinds";
+		controlsStrings[controlsStrings.length + 2] = "setMobile Controls";
 		for (i in 0...controlsStrings.length)
 		{
 			switch (controlsStrings[i].substring(3).split(" || ")[0])
@@ -82,7 +87,7 @@ class OptionsMenu extends MusicBeatState
 						FlxG.save.data.enablemissanimations = controlsStrings[curSelected].split(" || ")[2];
 				case "Change Note Theme":
 					if (!FlxG.save.data.enablemissanimations)
-						FlxG.save.data.notetheme = "NOTE";
+						FlxG.save.data.notetheme = controlsStrings[curSelected].split(" || ")[2];
 			}
 			FlxG.save.flush();
 
@@ -103,6 +108,9 @@ class OptionsMenu extends MusicBeatState
 		//		viewer.frames = Paths.getSparrowAtlas('notes/' + FlxG.save.data.notetheme + '_assets', 'shared');
 
 		noteselection = notetypes.indexOf(FlxG.save.data.notetheme);
+		#if android
+		addVirtualPad(UP_DOWN, A_B);
+		#end
 		super.create();
 		changeSelection();
 		//	openSubState(new OptionsSubState());
@@ -156,6 +164,8 @@ class OptionsMenu extends MusicBeatState
 					viewer.animation.addByPrefix('confirm', 'up confirm', 24, true);
 					viewer.animation.play('confirm');
 				//	trace(FlxG.save.data.notetheme);
+				case 'Mobile Controls':
+					FlxG.switchState(new options.CustomControlsState());
 				default: // lol
 					OptionsMenu.instance.openSubState(new KeyBindMenu());
 			}
@@ -233,8 +243,11 @@ class OptionsMenu extends MusicBeatState
 				viewer.animation.addByPrefix('static', 'arrowUP', 24, true);
 				viewer.animation.addByPrefix('confirm', 'up confirm', 24, false);
 				viewer.animation.play('static');
+			case 'Mobile Controls':
+				optionsText.text = "Tap A or press enter idfk.";
+				optionsDesc.text = "Customize your mobile controls (Supports hitbox)";
 			default: // lol im lazy
-				optionsText.text = "Press ENTER";
+				optionsText.text = "Press ENTER / Tap A";
 				optionsDesc.text = "Customize the keys you use. (Up down left right)";
 		}
 		// how did it take me this long to figure this out bruh (still applies here)

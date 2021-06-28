@@ -54,6 +54,9 @@ class CreditsMenu extends MusicBeatState
 			add(grpControls);
 			changeSelection();
 		});
+		#if android
+		addVirtualPad(UP_DOWN, A_B);
+		#end
 		super.create();
 	}
 

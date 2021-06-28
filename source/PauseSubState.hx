@@ -83,6 +83,10 @@ class PauseSubState extends MusicBeatSubstate
 
 		changeSelection();
 
+		#if android
+		addVirtualPad(UP_DOWN, A_B);
+		#end
+
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 	}
 

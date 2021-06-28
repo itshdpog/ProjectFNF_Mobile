@@ -6,11 +6,12 @@ import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 
-class LatencyState extends FlxState
+class LatencyState extends MusicBeatState
 {
 	var offsetText:FlxText;
 	var noteGrp:FlxTypedGroup<Note>;
 	var strumLine:FlxSprite;
+	var funiInstructions:FlxText;
 
 	override function create()
 	{
@@ -29,10 +30,20 @@ class LatencyState extends FlxState
 		offsetText.screenCenter();
 		add(offsetText);
 
+		funiInstructions = new FlxText(0, 550, 0, "Use A to multiply it by 10. B to exit. Left or right to change offset.");
+		funiInstructions.screenCenter(X);
+		#if android
+		add(funiInstructions);
+		#end
+
 		strumLine = new FlxSprite(FlxG.width / 2, 100).makeGraphic(FlxG.width, 5);
 		add(strumLine);
 
 		Conductor.changeBPM(120);
+
+		#if android
+		addVirtualPad(LEFT_RIGHT, A_B);
+		#end
 
 		super.create();
 	}

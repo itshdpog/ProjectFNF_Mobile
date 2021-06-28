@@ -58,7 +58,7 @@ class StoryMenuState extends MusicBeatState
 
 	var weekNames:Array<String> = [
 		// week names
-		"",
+		"How to do a lil funkin'",
 		"Daddy Dearest",
 		"Spooky Month",
 		"PICO",
@@ -230,6 +230,10 @@ class StoryMenuState extends MusicBeatState
 		updateText();
 
 		trace("Line 165");
+
+		#if android
+		addVirtualPad(FULL, A_B);
+		#end
 
 		super.create();
 	}

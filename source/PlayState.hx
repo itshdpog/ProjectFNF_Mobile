@@ -45,10 +45,16 @@ import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
 
+#if android
+import ui.Mobilecontrols;
+#end
+
 using StringTools;
 
 class PlayState extends MusicBeatState
 {
+	public static var instance:PlayState;
+
 	var characterCol:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
 	var col:Array<FlxColor> = [
 		0xFF51d8fb, // BF
@@ -175,6 +181,10 @@ class PlayState extends MusicBeatState
 	var songLength:Float = 0;
 	var detailsText:String = "";
 	var detailsPausedText:String = "";
+	#end
+
+	#if android
+	var mcontrols:Mobilecontrols; 
 	#end
 
 	// modcharting
@@ -888,6 +898,29 @@ class PlayState extends MusicBeatState
 		iconP2.cameras = [camHUD];
 		infoTxt.cameras = [camHUD];
 		doof.cameras = [camHUD];
+
+		#if android
+		mcontrols = new Mobilecontrols();
+		switch (mcontrols.mode)
+		{
+			case VIRTUALPAD_RIGHT | VIRTUALPAD_LEFT | VIRTUALPAD_CUSTOM:
+				controls.setVirtualPad(mcontrols._virtualPad, FULL, NONE);
+			case HITBOX:
+				controls.setHitBox(mcontrols._hitbox);
+			default:
+		}
+		trackedinputs = controls.trackedinputs;
+		controls.trackedinputs = [];
+
+		var camcontrol = new FlxCamera();
+		FlxG.cameras.add(camcontrol);
+		camcontrol.bgColor.alpha = 0;
+		mcontrols.cameras = [camcontrol];
+
+		mcontrols.visible = false;
+
+		add(mcontrols);
+		#end
 
 		// if (SONG.song == 'South')
 		// FlxG.camera.alpha = 0.7;

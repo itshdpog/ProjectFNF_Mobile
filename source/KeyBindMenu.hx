@@ -18,7 +18,7 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import io.newgrounds.NG;
+//import io.newgrounds.NG;
 import lime.app.Application;
 import lime.utils.Assets;
 import flixel.math.FlxMath;
@@ -28,7 +28,7 @@ import flixel.input.FlxKeyManager;
 
 using StringTools;
 
-class KeyBindMenu extends FlxSubState
+class KeyBindMenu extends MusicBeatSubstate
 {
 
     var keyTextDisplay:FlxText;
@@ -74,7 +74,7 @@ class KeyBindMenu extends FlxSubState
         blackBox = new FlxSprite(0,0).makeGraphic(FlxG.width,FlxG.height,FlxColor.BLACK);
         add(blackBox);
 
-        infoText = new FlxText(-10, 580, 1280, "(Escape to save, backspace to leave without saving)", 72);
+        infoText = new FlxText(-10, 580, 1280, "(Escape (B) to save, backspace (Not available on mobile unless keyboard.) to leave without saving)", 72);
 		infoText.scrollFactor.set(0, 0);
 		infoText.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		infoText.borderSize = 2;
@@ -95,6 +95,10 @@ class KeyBindMenu extends FlxSubState
 
         textUpdate();
 
+        #if android
+        addVirtualPad(UP_DOWN, A_B);
+        #end
+
 		super.create();
 	}
 
@@ -104,27 +108,24 @@ class KeyBindMenu extends FlxSubState
         switch(state){
 
             case "select":
-                if (FlxG.keys.justPressed.UP)
+                if (controls.UP_P)
 				{
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 					changeItem(-1);
 				}
 
-				if (FlxG.keys.justPressed.DOWN)
+				if (controls.DOWN_P)
 				{
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 					changeItem(1);
 				}
 
-                if (FlxG.keys.justPressed.ENTER){
+                if (controls.ACCEPT){
                     FlxG.sound.play(Paths.sound('scrollMenu'));
                     state = "input";
                 }
-                else if(FlxG.keys.justPressed.ESCAPE){
+                else if(controls.BACK){
                     quit();
-                }
-				else if (FlxG.keys.justPressed.BACKSPACE){
-                    reset();
                 }
 
             case "input":
@@ -134,12 +135,12 @@ class KeyBindMenu extends FlxSubState
                 state = "waiting";
 
             case "waiting":
-                if(FlxG.keys.justPressed.ESCAPE){
+                if(controls.BACK){
                     keys[curSelected] = tempKey;
                     state = "select";
                     FlxG.sound.play(Paths.sound('confirmMenu'));
                 }
-                else if(FlxG.keys.justPressed.ENTER){
+                else if(controls.ACCEPT){
                     addKey(defaultKeys[curSelected]);
                     save();
                     state = "select";

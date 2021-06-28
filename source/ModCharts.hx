@@ -1,3 +1,5 @@
+package;
+
 import flixel.group.FlxGroup;
 import flixel.FlxBasic.FlxType;
 import flixel.FlxCamera;

@@ -50,6 +50,14 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		bf.playAnim('firstDeath');
 	}
+	override function create()
+	{
+		#if android
+		addVirtualPad(NONE, A_B);
+		#end
+		
+		super.create();
+	}
 
 	override function update(elapsed:Float)
 	{
