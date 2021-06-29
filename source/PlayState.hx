@@ -1103,6 +1103,9 @@ class PlayState extends MusicBeatState
 
 	function startCountdown():Void
 	{
+		#if android
+		mcontrols.visible = true;
+		#end
 		inCutscene = false;
 
 		generateStaticArrows(0);

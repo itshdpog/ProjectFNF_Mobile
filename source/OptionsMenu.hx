@@ -42,11 +42,12 @@ class OptionsMenu extends MusicBeatState
 
 	override function create()
 	{
+		FlxG.save.data.countdownafterpause = false;
 		instance = this;
 
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		controlsStrings = CoolUtil.coolTextFile(Paths.txt('options'));
-		menuBG.color = FlxColor.GRAY;
+		menuBG.color = 0xFF3b18d9;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
@@ -64,8 +65,7 @@ class OptionsMenu extends MusicBeatState
 
 		grpControls = new FlxTypedGroup<Alphabet>();
 		add(grpControls);
-		controlsStrings[controlsStrings.length + 1] = "setCustomize Keybinds";
-		controlsStrings[controlsStrings.length + 2] = "setMobile Controls";
+		controlsStrings[controlsStrings.length + 1] = #if !android "setCustomize Keybinds" #else "setMobile Controls" #end;
 		for (i in 0...controlsStrings.length)
 		{
 			switch (controlsStrings[i].substring(3).split(" || ")[0])
@@ -85,9 +85,12 @@ class OptionsMenu extends MusicBeatState
 				case "Enable Miss Animations":
 					if (!FlxG.save.data.enablemissanimations)
 						FlxG.save.data.enablemissanimations = controlsStrings[curSelected].split(" || ")[2];
+				case 'Advanced Info Bar':
+					if (!FlxG.save.data.enablemissanimations)
+						FlxG.save.data.advancedinfobar = controlsStrings[curSelected].split(" || ")[2];
 				case "Change Note Theme":
 					if (!FlxG.save.data.enablemissanimations)
-						FlxG.save.data.notetheme = controlsStrings[curSelected].split(" || ")[2];
+						FlxG.save.data.notetheme = 'NOTE';
 			}
 			FlxG.save.flush();
 
@@ -145,6 +148,9 @@ class OptionsMenu extends MusicBeatState
 				case "Enable Miss Animations":
 					FlxG.save.data.enablemissanimations = !FlxG.save.data.enablemissanimations;
 					optionsText.text = FlxG.save.data.enablemissanimations;
+				case 'Advanced Info Bar':
+					FlxG.save.data.advancedinfobar = !FlxG.save.data.advancedinfobar;
+					optionsText.text = FlxG.save.data.advancedinfobar;
 				case "Change Note Theme":
 					noteselection++;
 					if (noteselection > notetypes.length - 1)
@@ -164,10 +170,12 @@ class OptionsMenu extends MusicBeatState
 					viewer.animation.addByPrefix('confirm', 'up confirm', 24, true);
 					viewer.animation.play('confirm');
 				//	trace(FlxG.save.data.notetheme);
-				case 'Mobile Controls':
-					FlxG.switchState(new options.CustomControlsState());
 				default: // lol
+				#if !android
 					OptionsMenu.instance.openSubState(new KeyBindMenu());
+					#else
+					FlxG.switchState(new options.CustomControlsState());
+				#end
 			}
 			FlxG.save.flush();
 			// this could be us but FlxG savedata sucks dick and im too lazy to see how kade engine did it
@@ -243,12 +251,15 @@ class OptionsMenu extends MusicBeatState
 				viewer.animation.addByPrefix('static', 'arrowUP', 24, true);
 				viewer.animation.addByPrefix('confirm', 'up confirm', 24, false);
 				viewer.animation.play('static');
-			case 'Mobile Controls':
-				optionsText.text = "Tap A or press enter idfk.";
-				optionsDesc.text = "Customize your mobile controls (Supports hitbox)";
+
 			default: // lol im lazy
-				optionsText.text = "Press ENTER / Tap A";
-				optionsDesc.text = "Customize the keys you use. (Up down left right)";
+				#if !android
+					optionsText.text = "Press ENTER / Tap A";
+					optionsDesc.text = "Customize the keys you use. (Up down left right)";
+				#else
+					optionsText.text = "Tap A or press enter idfk.";
+					optionsDesc.text = "Customize your mobile controls (Supports hitbox)";
+				#end
 		}
 		// how did it take me this long to figure this out bruh (still applies here)
 		optionsDesc.text = controlsStrings[curSelected].split(" || ")[1];
